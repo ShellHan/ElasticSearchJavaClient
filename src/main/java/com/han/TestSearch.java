@@ -1,14 +1,10 @@
 package com.han;
 
-import com.google.gson.JsonArray;
-import com.google.gson.JsonObject;
-import org.elasticsearch.action.index.IndexResponse;
 import org.elasticsearch.action.search.SearchRequestBuilder;
 import org.elasticsearch.action.search.SearchResponse;
 import org.elasticsearch.client.transport.TransportClient;
 import org.elasticsearch.common.settings.Settings;
 import org.elasticsearch.common.transport.TransportAddress;
-import org.elasticsearch.common.xcontent.XContentType;
 import org.elasticsearch.index.query.QueryBuilders;
 import org.elasticsearch.search.SearchHit;
 import org.elasticsearch.search.SearchHits;
@@ -88,7 +84,7 @@ public class TestSearch {
     public void searchSort()throws Exception{
     	SearchRequestBuilder srb=client.prepareSearch("film").setTypes("dongzuo");
     	SearchResponse sr=srb.setQuery(QueryBuilders.matchAllQuery())
-    		.addSort("publishDate", SortOrder.DESC)
+    		.addSort("publishDate", SortOrder.ASC)
     		.execute()
     		.actionGet(); 
     	SearchHits hits=sr.getHits();
@@ -98,7 +94,7 @@ public class TestSearch {
     }
     
     /**
-     * �����й���
+     * 数据列过滤
      * @throws Exception
      */
     @Test
@@ -115,13 +111,13 @@ public class TestSearch {
     }
     
     /**
-     * ������ѯ
+     * 条件查询
      * @throws Exception
      */
     @Test
     public void searchByCondition()throws Exception{
     	SearchRequestBuilder srb=client.prepareSearch("film").setTypes("dongzuo");
-    	SearchResponse sr=srb.setQuery(QueryBuilders.matchQuery("title", "ս"))
+    	SearchResponse sr=srb.setQuery(QueryBuilders.matchQuery("title", "战"))
     		.setFetchSource(new String[]{"title","price"}, null)
     		.execute()
     		.actionGet(); 
@@ -132,7 +128,7 @@ public class TestSearch {
     }
     
     /**
-     * ������ѯ������ʾ
+     * 高亮查询
      * @throws Exception
      */
     @Test
@@ -142,7 +138,7 @@ public class TestSearch {
     	highlightBuilder.preTags("<h2><font>");
     	highlightBuilder.postTags("</font></h2>");
     	highlightBuilder.field("title");
-		SearchResponse sr=srb.setQuery(QueryBuilders.matchQuery("title", "ս"))
+		SearchResponse sr=srb.setQuery(QueryBuilders.matchQuery("title", "战"))
     		.highlighter(highlightBuilder)
     		.setFetchSource(new String[]{"title","price"}, null)
     		.execute()
